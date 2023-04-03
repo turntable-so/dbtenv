@@ -24,6 +24,7 @@ DBT_ADAPTER_TYPES = [
     'clickhouse',
     'databricks',
     'dremio',
+    'duckdb',
     'exasol',
     'firebolt',
     'materialize',

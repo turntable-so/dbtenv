@@ -42,7 +42,11 @@ class VersionsSubcommand(Subcommand):
         versions.sort()
 
         if versions:
-            active_version = dbtenv.version.get_version(self.env)
+            arg_profiles_dir = None
+            if args.profiles_dir:
+                arg_profiles_dir = args.profiles_dir
+
+            active_version = dbtenv.version.get_version(self.env, profiles_dir=arg_profiles_dir)
             logger.info("+ = installed, * = active")
             for version in versions:
                 line = "+ " if version in installed_versions else "  "

@@ -43,12 +43,16 @@ class WhichSubcommand(Subcommand):
         )
 
     def execute(self, args: Args) -> None:
-        adapter_type = dbtenv.version.try_get_project_adapter_type(self.env.project_file)
+        arg_profiles_dir = None
+        if args.profiles_dir:
+            arg_profiles_dir = args.profiles_dir
+
+        adapter_type, no_adapter_type_reason = dbtenv.version.try_get_project_adapter_type(self.env.project_file,profiles_dir=arg_profiles_dir)
 
         if args.dbt_version:
             version = Version(adapter_type=adapter_type, dbt_version=args.dbt_version)
         else:
-            version = dbtenv.version.get_version(self.env, adapter_type=adapter_type)
+            version = dbtenv.version.get_version(self.env, adapter_type=adapter_type, profiles_dir=arg_profiles_dir)
 
         if version:
             logger.info(f"Using {version} ({version.source_description}).")

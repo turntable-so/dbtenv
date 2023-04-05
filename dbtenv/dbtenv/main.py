@@ -71,6 +71,16 @@ def build_common_args_parser(env: Environment, dest_prefix: str = '') -> argpars
             Note that if outputting debug information has been enabled this setting will have no effect.
         """
     )
+
+    common_args_parser.add_argument(
+        '--profiles-dir',
+        dest=f'{dest_prefix}profiles_dir',
+        metavar='<path>',
+        help=f"""
+            Absolute path to the folder containing the DBT profiles.yml file.
+        """
+    )
+    
     return common_args_parser
 
 
@@ -148,6 +158,10 @@ def main(args: List[str] = None) -> None:
         python = parsed_args.get('python')
         if python:
             env.python = python
+
+        profiles_dir = parsed_args.get('profiles_dir')
+        if profiles_dir:
+            env.profiles_dir = profiles_dir
 
         simulate_release_date = parsed_args.get('simulate_release_date')
         if simulate_release_date:

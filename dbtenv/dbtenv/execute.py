@@ -55,12 +55,14 @@ class ExecuteSubcommand(Subcommand):
 
     def execute(self, args: Args) -> None:
         arg_target_name = None
+        arg_profiles_dir = None
         for i, arg in enumerate(args.dbt_args):
             if arg == "--target":
                 arg_target_name = args.dbt_args[i+1]
                 break
-
-        adapter_type, no_adapter_type_reason = dbtenv.version.try_get_project_adapter_type(self.env.project_file, target_name=arg_target_name)
+        if args.profiles_dir:
+            arg_profiles_dir = args.profiles_dir
+        adapter_type, no_adapter_type_reason = dbtenv.version.try_get_project_adapter_type(self.env.project_file, target_name=arg_target_name, profiles_dir=arg_profiles_dir)
         if args.dbt_version_specifier:
             if bool(re.search(r"^(dbt-.+)==(.+)$", args.dbt_version_specifier)):
                 version = Version(pip_specifier=args.dbt_version_specifier, source_description="specified using --dbt arg")
@@ -73,7 +75,7 @@ class ExecuteSubcommand(Subcommand):
                 logger.info("The argument passed to --dbt didn't match a dbt version (e.g. 1.0.0) or full pip specifier (e.g. dbt-snowflake==1.0.0).")
                 return
         else:
-            version = dbtenv.version.get_version(self.env, adapter_type=adapter_type)
+            version = dbtenv.version.get_version(self.env, adapter_type=adapter_type, profiles_dir=arg_profiles_dir)
 
         if not version:
             return

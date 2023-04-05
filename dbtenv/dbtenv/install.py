@@ -67,7 +67,10 @@ class InstallSubcommand(Subcommand):
         if args.dbt_pip_specifier:
             dbt_pip_specifier = args.dbt_pip_specifier
         else:
-            version = dbtenv.version.get_version(self.env)
+            arg_profiles_dir = None
+            if args.profiles_dir:
+                arg_profiles_dir = args.profiles_dir
+            version = dbtenv.version.get_version(self.env, profiles_dir=arg_profiles_dir)
             logger.info(f"Using {version} ({version.source_description}).")
 
         version = Version(pip_specifier=dbt_pip_specifier)

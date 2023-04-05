@@ -127,7 +127,10 @@ class VersionSubcommand(Subcommand):
             else:
                 logger.info(f"No dbt version has been set for the current shell using a {dbtenv.DBT_VERSION_VAR} environment variable.")
         else:
-            version = get_version(self.env)
+            arg_profiles_dir = None
+            if args.profiles_dir:
+                arg_profiles_dir = args.profiles_dir
+                version = get_version(self.env, profiles_dir=arg_profiles_dir)
             if version:
                 print(f"{version}  ({version.source_description})")
 
@@ -246,7 +249,7 @@ def try_get_max_compatible_version(versions: Collection[Version], requirements: 
     else:
         return None
 
-def try_get_project_adapter_type(project_file: str, target_name: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
+def try_get_project_adapter_type(project_file: str, target_name: Optional[str] = None, profiles_dir: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
     if not project_file:
         return None, "not running inside dbt project"
     with open(project_file) as file:
@@ -255,7 +258,11 @@ def try_get_project_adapter_type(project_file: str, target_name: Optional[str] =
     profile_name = dbt_project_yml["profile"]
 
     home = os.path.expanduser("~")
-    profiles_yml_filepath = os.path.join(home, ".dbt", "profiles.yml")
+    if profiles_dir:
+        adj_profiles_dir = profiles_dir
+        profiles_yml_filepath = os.path.join(adj_profiles_dir, "profiles.yml")
+    else:
+        profiles_yml_filepath = os.path.join(home, ".dbt", "profiles.yml")
     if not os.path.exists(profiles_yml_filepath):
         return None, f"{profiles_yml_filepath} does not exist"
 
@@ -319,9 +326,12 @@ def try_get_project_version(env: Environment, preferred_version: Optional[Versio
     return None
 
 
-def get_version(env: Environment, adapter_type: Optional[str] = None) -> Optional[Version]:
+def get_version(env: Environment, adapter_type: Optional[str] = None, profiles_dir: Optional[str] = None) -> Optional[Version]:
     if not adapter_type:
-        adapter_type, no_adapter_type_reason = dbtenv.version.try_get_project_adapter_type(env.project_file)
+        arg_profiles_dir = None
+        if profiles_dir:
+            arg_profiles_dir = profiles_dir
+        adapter_type, no_adapter_type_reason = dbtenv.version.try_get_project_adapter_type(env.project_file, profiles_dir=arg_profiles_dir)
 
     shell_version = try_get_shell_version(env, adapter_type)
     if shell_version:

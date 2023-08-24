@@ -54,21 +54,19 @@ class InstallSubcommand(Subcommand):
             """
         )
         parser.add_argument(
-            'other_packages',
-            nargs="?",
-            type=str,
-            metavar='<other_packages>',
-            help="""
-                other packages to install along with the dbt versions specified
-            """
-        )
-        parser.add_argument(
             '-e',
             '--editable',
             action='store_true',
             help="""
                 When installing a dbt package from a version control project URL or local project path using pip,
                 install it in "editable" mode.
+            """
+        )
+        parser.add_argument(
+            '--other_packages',
+            nargs="+",
+            help="""
+                other packages to install along with the dbt versions specified
             """
         )
 

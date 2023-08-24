@@ -50,7 +50,7 @@ class InstallSubcommand(Subcommand):
         parser.add_argument(
             '--other_packages',
             nargs="+",
-            dest='package',
+            dest="package",
             help="""
                 other packages to install along with the dbt versions specified
             """
@@ -84,7 +84,7 @@ class InstallSubcommand(Subcommand):
         version = Version(pip_specifier=dbt_pip_specifier)
 
         pip_dbt = dbtenv.pip.PipDbt(self.env, version)
-        pip_dbt.install(force=args.force, package_location=args.package_location, editable=args.editable, other_packages=args.other_packages)
+        pip_dbt.install(force=args.force, package_location=args.package_location, editable=args.editable, other_packages=args.package)
 
 
 def install_dbt(env: Environment, version: Version) -> None:

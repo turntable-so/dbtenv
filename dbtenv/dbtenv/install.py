@@ -54,6 +54,14 @@ class InstallSubcommand(Subcommand):
             """
         )
         parser.add_argument(
+            'other_packages',
+            metavar='<other_packages>',
+            nargs="?",
+            help="""
+                other packages to install along with the dbt versions specified
+            """
+        )
+        parser.add_argument(
             '-e',
             '--editable',
             action='store_true',
@@ -62,14 +70,7 @@ class InstallSubcommand(Subcommand):
                 install it in "editable" mode.
             """
         )
-        parser.add_argument(
-            '--other_packages',
-            type = list,
-            nargs="+",
-            help="""
-                other packages to install along with the dbt versions specified
-            """
-        )
+
 
     def execute(self, args: Args) -> None:
         if args.dbt_pip_specifier:

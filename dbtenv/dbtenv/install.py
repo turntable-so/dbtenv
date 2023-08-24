@@ -57,6 +57,7 @@ class InstallSubcommand(Subcommand):
             'other_packages',
             metavar='<other_packages>',
             nargs="?",
+            type=str,
             help="""
                 other packages to install along with the dbt versions specified
             """

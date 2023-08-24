@@ -29,7 +29,7 @@ class InstallSubcommand(Subcommand):
         )
         parser.add_argument(
             '-f',
-            '--force',
+            '--forced',
             action='store_true',
             help="Install even if the dbt version appears to already be installed."
         )
@@ -55,9 +55,9 @@ class InstallSubcommand(Subcommand):
         )
         parser.add_argument(
             'other_packages',
-            metavar='<other_packages>',
             nargs="?",
             type=str,
+            metavar='<other_packages>',
             help="""
                 other packages to install along with the dbt versions specified
             """

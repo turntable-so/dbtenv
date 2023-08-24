@@ -11,6 +11,8 @@ import subprocess
 import threading
 from typing import List, Optional, Union
 import urllib.request
+import pkg_resources
+
 
 # Local
 import dbtenv
@@ -82,9 +84,22 @@ class PipDbt(Dbt):
         self.venv_directory = os.path.join(env.venvs_directory, version.pip_specifier)
         self._executable: Optional[str] = None
 
-    def install(self, force: bool = False, package_location: Optional[str] = None, editable: bool = False) -> None:
+    def get_currently_installed_packages(self) -> List[str]:
+        # Replace '/path/to/venv' with the actual path to your virtual environment\
+        distributions = pkg_resources.working_set.by_key.values()
+        packages = [d.project_name for d in distributions if d.location.startswith(self.venv_directory)]
+        return packages
+
+    def install(self, force: bool = False, package_location: Optional[str] = None, editable: bool = False, other_packages: Optional[list] = None ) -> None:
         if self.is_installed():
+            needs_reinstall = False
             if force:
+                needs_reinstall = True
+            elif other_packages:
+                installed = self.get_currently_installed_packages()
+                needs_reinstall = any(item not in installed for item in other_packages)
+
+            if needs_reinstall:
                 logger.info(f"`{self.venv_directory}` already exists but will be overwritten.")
                 self._executable = None
             else:
@@ -109,6 +124,10 @@ class PipDbt(Dbt):
             subprocess.run([pip, 'install', '--upgrade', 'pip'])
             # Install wheel to avoid pip falling back to using legacy `setup.py` installs.
             subprocess.run([pip, 'install', '--disable-pip-version-check', 'wheel'])
+            # Install other packages if specified
+            if other_packages:
+                subprocess.run([pip, 'install', '--disable-pip-version-check', *other_packages])
+
             pip_args = ['install', '--disable-pip-version-check']
             if package_location:
                 package_source = f"`{package_location}`"

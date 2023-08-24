@@ -62,6 +62,14 @@ class InstallSubcommand(Subcommand):
                 install it in "editable" mode.
             """
         )
+        parser.add_argument(
+            '-p',
+            '--other_packages',
+            nargs="+",
+            help="""
+                other packages to install along with the dbt versions specified
+            """
+        )
 
     def execute(self, args: Args) -> None:
         if args.dbt_pip_specifier:
@@ -76,7 +84,7 @@ class InstallSubcommand(Subcommand):
         version = Version(pip_specifier=dbt_pip_specifier)
 
         pip_dbt = dbtenv.pip.PipDbt(self.env, version)
-        pip_dbt.install(force=args.force, package_location=args.package_location, editable=args.editable)
+        pip_dbt.install(force=args.force, package_location=args.package_location, editable=args.editable, other_packages=args.other_packages)
 
 
 def install_dbt(env: Environment, version: Version) -> None:

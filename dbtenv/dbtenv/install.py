@@ -28,12 +28,6 @@ class InstallSubcommand(Subcommand):
             help=self.__doc__
         )
         parser.add_argument(
-            '-f',
-            '--force',
-            action='store_true',
-            help="Install even if the dbt version appears to already be installed."
-        )
-        parser.add_argument(
             'dbt_pip_specifier',
             nargs='?',
             type=str,
@@ -60,6 +54,12 @@ class InstallSubcommand(Subcommand):
             help="""
                 other packages to install along with the dbt versions specified
             """
+        )
+        parser.add_argument(
+            '-f',
+            '--force',
+            action='store_true',
+            help="Install even if the dbt version appears to already be installed."
         )
         parser.add_argument(
             '-e',

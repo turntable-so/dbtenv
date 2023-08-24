@@ -11,7 +11,6 @@ import subprocess
 import threading
 from typing import List, Optional, Union
 import urllib.request
-import pkg_resources
 
 
 # Local

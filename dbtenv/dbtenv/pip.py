@@ -75,6 +75,13 @@ def get_pypi_all_dbt_package_versions() -> List[Version]:
         versions += get_pypi_package_versions(adapter_type)
     return versions
 
+def find_directories(root_directory: str) -> List[str]:
+        directories = []
+        for dirpath, dirnames, filenames in os.walk(root_directory):
+            for dirname in dirnames:
+                directories.append(os.path.join(dirpath, dirname))
+        return directories
+
 
 class PipDbt(Dbt):
     """A specific version of dbt installed with pip in a Python virtual environment."""
@@ -84,13 +91,15 @@ class PipDbt(Dbt):
         self.venv_directory = os.path.join(env.venvs_directory, version.pip_specifier)
         self._executable: Optional[str] = None
 
+
     def get_currently_installed_packages(self) -> List[str]:
-        # Replace '/path/to/venv' with the actual path to your virtual environment\
-        distributions = pkg_resources.working_set.by_key.values()
-        print(distributions)
-        print("venv_directory", self.venv_directory)
-        packages = [d.project_name for d in distributions if d.location.startswith(self.venv_directory)]
-        return packages
+        site_packages_search = [path for path in find_directories(self.venv_directory) if "site-packages" in path]
+        
+        if site_packages_search == []:
+            return []
+        else:
+            packages = [package.split("-")[0] for package in os.listdir(site_packages_search[0]) if package.endswith(".dist-info")]
+            return packages
 
     def install(self, force: bool = False, package_location: Optional[str] = None, editable: bool = False, other_packages: Optional[list] = None ) -> None:
         if self.is_installed():

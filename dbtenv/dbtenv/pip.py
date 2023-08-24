@@ -82,6 +82,15 @@ def find_directories(root_directory: str) -> List[str]:
                 directories.append(os.path.join(dirpath, dirname))
         return directories
 
+def transform_package_name(package_name):
+    # Remove extras and version information
+    cleaned_name = re.sub(r'\[.*\]|\=.*$', '', package_name)
+    
+    # Replace hyphens with underscores
+    transformed_name = cleaned_name.replace('-', '_')
+    
+    return transformed_name
+
 
 class PipDbt(Dbt):
     """A specific version of dbt installed with pip in a Python virtual environment."""
@@ -107,8 +116,9 @@ class PipDbt(Dbt):
             if force:
                 needs_reinstall = True
             elif other_packages:
-                installed = self.get_currently_installed_packages()                
-                needs_reinstall = any(item not in installed for item in other_packages)
+                adj_other_packages = [transform_package_name(package) for package in other_packages]
+                installed = self.get_currently_installed_packages()               
+                needs_reinstall = any(item not in installed for item in adj_other_packages)
 
             if needs_reinstall:
                 logger.info(f"`{self.venv_directory}` already exists but will be overwritten.")

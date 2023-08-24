@@ -88,6 +88,7 @@ class PipDbt(Dbt):
         # Replace '/path/to/venv' with the actual path to your virtual environment\
         distributions = pkg_resources.working_set.by_key.values()
         print(distributions)
+        print("venv_directory", self.venv_directory)
         packages = [d.project_name for d in distributions if d.location.startswith(self.venv_directory)]
         return packages
 

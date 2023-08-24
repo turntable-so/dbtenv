@@ -64,6 +64,7 @@ class InstallSubcommand(Subcommand):
         )
         parser.add_argument(
             '--other_packages',
+            type = list,
             nargs="+",
             help="""
                 other packages to install along with the dbt versions specified

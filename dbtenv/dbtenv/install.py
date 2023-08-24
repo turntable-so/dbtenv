@@ -63,7 +63,6 @@ class InstallSubcommand(Subcommand):
             """
         )
         parser.add_argument(
-            '-p',
             '--other_packages',
             nargs="+",
             help="""

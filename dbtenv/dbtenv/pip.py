@@ -97,7 +97,9 @@ class PipDbt(Dbt):
                 needs_reinstall = True
             elif other_packages:
                 installed = self.get_currently_installed_packages()
+                print("installed ", installed)
                 needs_reinstall = any(item not in installed for item in other_packages)
+                print("needs_reinstall ", needs_reinstall)
 
             if needs_reinstall:
                 logger.info(f"`{self.venv_directory}` already exists but will be overwritten.")
